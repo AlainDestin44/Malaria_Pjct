@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Load the ID from localStorage if it exists
+            const savedId = localStorage.getItem('patient_id');
+            if (savedId) {
+                document.getElementById('patient_id_input').value = savedId;
+            }
+
+            // Save the ID to localStorage when the form is submitted
+            document.getElementById('upload_form').addEventListener('submit', function(event) {
+                const idInput = document.getElementById('patient_id_input').value;
+                localStorage.setItem('patient_id', idInput);
+            });
+
+            // Clear the ID from localStorage when the Save button is pressed
+            document.getElementById('save_images_button').addEventListener('click', function() {
+                localStorage.removeItem('patient_id');
+            });
+        });
+    </script>
+</head>
+<body>
+    <form method="POST" enctype="multipart/form-data" id="upload_form">
+        <label for="id">Enter ID:</label>
+        <input type="text" name="id" id="patient_id_input" required><br><br>
+
+        <label for="image">Select Image:</label>
+        <input type="file" name="image"  {% if uploaded_files|length <= max_images %}{% endif %}><br><br>
+
+        <!-- Disable the Upload Image button when the limit is reached -->
+        <input type="submit" name="upload_image" value="Upload Image" 
+               {% if uploaded_files|length >= max_images %}disabled{% endif %}>
+
+        <!-- Save button remains active but will only work if the limit is reached -->
+        <input type="submit" name="save_images" value="Save All Images" id="save_images_button"
+               {% if uploaded_files|length < max_images %}disabled{% endif %}>
+
+        <p>{{ uploaded_files|length }} of {{ max_images }} images uploaded.</p>
+    </form>
+</body>
+</html>
+
+    <ul>
+        {% for file in uploaded_files %}
+            <li>{{ file }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Patient Diagnoses</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Patient ID</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for diagnosis in diagnoses %}
+            <tr>
+                <td>{{ diagnosis.patient_id }}</td>
+                <td>{{ diagnosis.status }}</td>
+                <td>
+                    <form action="{{ url_for('diagnosis_bp.process_diagnosis',id=diagnosis.patient_id)}}" method="POST" style="display:inline;">
+                        <button type="submit" {% if diagnosis.status != 'initiated' %}disabled{% endif %}>Process</button>
+                    </form>
+                    <form action="{{ url_for('diagnosis_bp.get_result',id=diagnosis.patient_id)}}" method="get" style="display:inline;">
+                        <button type="submit" {% if diagnosis.status != 'completed' %}disabled{% endif %}>View Results</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="/">Go Back</a>
+</body>
+</html>
