@@ -80,22 +80,84 @@ def process_patient_images(patient_id, image_paths, temp_storage):
         # Save the results to temporary storage
         temp_storage.save_detection(patient_id, image_id, results)
 
-def aggregate_and_assess_severity(image_results, severity_threshold):
-    aggregated_results = {}
+# def aggregate_and_assess_severity(image_results, severity_threshold):
+#     aggregated_results = {}
 
-    # Aggregate data across all images
+#     # Aggregate data across all images
+#     for result in image_results:
+#         seen_parasites = set()  # To avoid double counting in the same image
+#         for parasite in result["results"]:
+#             parasite_type = parasite["class_name"]
+#             confidence = parasite["confidence"]
+
+#             # Unique key to identify each detected instance by class and bounding box
+#             unique_key = (parasite_type, tuple(parasite["bbox"]))
+
+#             if unique_key not in seen_parasites:
+#                 seen_parasites.add(unique_key)
+
+#                 if parasite_type not in aggregated_results:
+#                     aggregated_results[parasite_type] = {
+#                         "count": 0,
+#                         "total_confidence": 0.0,
+#                         "instances": 0
+#                     }
+
+#                 aggregated_results[parasite_type]["count"] += 1
+#                 aggregated_results[parasite_type]["total_confidence"] += confidence
+#                 aggregated_results[parasite_type]["instances"] += 1
+
+#     # Calculate average confidence and severity, and print results
+#     severity_results = {}
+#     for parasite_type, data in aggregated_results.items():
+#         data["average_confidence"] = (
+#             data["total_confidence"] / data["instances"]
+#             if data["instances"] > 0 else 0
+#         )
+#         # Example severity computation: (count * average_confidence)
+#         severity = data["count"] * data["average_confidence"]
+
+#         # Assess severity based on the threshold
+#         severity_level = "low"
+#         if severity > severity_threshold:
+#             severity_level = "high"
+        
+#         # Store the results
+#         severity_results[parasite_type] = {
+#             "severity": severity,
+#             "severity_level": severity_level,
+#             "count": data["count"],
+#             "average_confidence": data["average_confidence"]
+#         }
+#     return severity_results   
+
+def aggregate_and_assess_severity(image_results, severity_threshold):
+    """
+    Aggregate parasite detection results and assess severity based on the WBC count.
+
+    Parameters:
+    - image_results: List of dictionaries containing detection results for each image.
+    - severity_threshold: The threshold ratio for determining severity.
+
+    Returns:
+    - Aggregated results for each parasite type, including average confidence.
+    - Severity assessment based on adjusted parasite-to-WBC ratio.
+    """
+    aggregated_results = {}
+    total_parasite_count = 0
+    total_wbc_count = 0
+
+    # Iterate through each image result
     for result in image_results:
-        seen_parasites = set()  # To avoid double counting in the same image
         for parasite in result["results"]:
             parasite_type = parasite["class_name"]
             confidence = parasite["confidence"]
 
-            # Unique key to identify each detected instance by class and bounding box
-            unique_key = (parasite_type, tuple(parasite["bbox"]))
-
-            if unique_key not in seen_parasites:
-                seen_parasites.add(unique_key)
-
+            if parasite_type.lower() == "wbc":
+                # Count WBCs
+                total_wbc_count += 1
+            else:
+                # Aggregate data for other parasites
                 if parasite_type not in aggregated_results:
                     aggregated_results[parasite_type] = {
                         "count": 0,
@@ -107,27 +169,45 @@ def aggregate_and_assess_severity(image_results, severity_threshold):
                 aggregated_results[parasite_type]["total_confidence"] += confidence
                 aggregated_results[parasite_type]["instances"] += 1
 
-    # Calculate average confidence and severity, and print results
-    severity_results = {}
+        # Increment total parasite count (excluding WBCs)
+        total_parasite_count += len([p for p in result["results"] if p["class_name"].lower() != "wbc"])
+
+    # Calculate average confidence for each parasite type
     for parasite_type, data in aggregated_results.items():
         data["average_confidence"] = (
             data["total_confidence"] / data["instances"]
             if data["instances"] > 0 else 0
         )
-        # Example severity computation: (count * average_confidence)
-        severity = data["count"] * data["average_confidence"]
+        # Remove no longer needed fields
+        del data["total_confidence"]
+        del data["instances"]
 
-        # Assess severity based on the threshold
-        severity_level = "low"
-        if severity > severity_threshold:
-            severity_level = "high"
-        
-        # Store the results
-        severity_results[parasite_type] = {
-            "severity": severity,
-            "severity_level": severity_level,
-            "count": data["count"],
-            "average_confidence": data["average_confidence"]
-        }
-    return severity_results   
+    # Assess severity based on the adjusted ratio of parasites to WBCs
+    if total_wbc_count > 0:
+        # Adjusting the parasite density
+        adjusted_parasite_density = (total_parasite_count * 8000) / total_wbc_count
+    else:
+        adjusted_parasite_density = 0
+    
+    severity = "Mild" if adjusted_parasite_density < severity_threshold else "Severe"
+        # Results summary
+      # Results summary
+    results_summary = {
+        "detected_parasites": [
+            {
+                "parasite_name": parasite_type,
+                "count": data["count"],
+                "average_confidence": data["average_confidence"]
+            }
+            for parasite_type, data in aggregated_results.items()
+        ],
+        "total_wbc_count": total_wbc_count,
+        "adjusted_parasite_density": adjusted_parasite_density,
+        "severity": severity
+    }
 
+    # Output for debugging
+    # print(f"Total WBC Count: {total_wbc_count}")
+    # print(f"Adjusted Parasite Density: {adjusted_parasite_density}")
+
+    return results_summary

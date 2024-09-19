@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-MODEL_PATH = '/Users/alaindestinkarasira/Documents/Malaria_pjct_v1/MalariaDiagnosis/app/models/best.onnx'
+MODEL_PATH = '/Users/alaindestinkarasira/Documents/MALARIA/Malaria_Pjct/MalariaDiagnosis/app/models/new_best.onnx'
 
 # Function to load the model and create a session
 def load_model(model_path):

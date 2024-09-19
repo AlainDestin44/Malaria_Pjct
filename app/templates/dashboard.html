@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malaria Diagnosis Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../static/css/dashboard.css">
+</head>
+
+<body>
+    <!-- Header section -->
+    <header>
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <h1 id="malaria-diagnosis" class="h3 mb-0"><i class="fas fa-microscope header-icon"></i> Malaria
+                        Diagnosis</h1>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search...">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div class="notification-icon mr-3">
+                            <!-- <button class="btn btn-link position-relative">
+                                <i class="fas fa-bell"></i>
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                            </button> -->
+                        </div>
+                        <!-- <div class="user-profile dropdown">
+                            <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                <img src="https://via.placeholder.com/40" alt="User Avatar"
+                                    class="user-avatar rounded-circle">
+                                <span id="loggedInUser"></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">Profile</a>
+                                <a class="dropdown-item" href="#">Settings</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Logout</a>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar and Main Content -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" id="dashboard-link">
+                                <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="patient-management-link">
+                                <i class="fas fa-user-plus mr-2"></i> Patient Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="diagnosis-link">
+                                <i class="fas fa-stethoscope mr-2"></i> Diagnosis Module
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section">
+                    <h2 class="mt-4">Dashboard</h2>
+                    <div class="row">
+                        <!-- New Diagnoses Card -->
+                        <div class="col-md-3 col-sm-6 col-12 mb-4">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>New Diagnoses</h5>
+                                            <h3 id="newDiagnosesCount">0</h3>
+                                        </div>
+                                        <div class="card-icon">
+                                            <i class="fas fa-stethoscope fa-2x text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Results Card -->
+                        <div class="col-md-3 col-sm-6 col-12 mb-4">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>Pending Results</h5>
+                                            <h3 id="pendingResultsCount">0</h3>
+                                        </div>
+                                        <div class="card-icon">
+                                            <i class="fas fa-hourglass-half fa-2x text-warning"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Patients Card -->
+                        <div class="col-md-3 col-sm-6 col-12 mb-4">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>Patients</h5>
+                                            <h3 id="patientsCount">0</h3>
+                                        </div>
+                                        <div class="card-icon">
+                                            <i class="fas fa-user-md fa-2x text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Completed Reports Card -->
+                        <div class="col-md-3 col-sm-6 col-12 mb-4">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>Completed </h5>
+                                            <h3 id="completedReportsCount">0</h3>
+                                        </div>
+                                        <div class="card-icon">
+                                            <i class="fas fa-file-medical-alt fa-2x text-info"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Modal -->
+                    <!-- Diagnosis Activities Table -->
+                    <div class="mt-5">
+                        <h3>Diagnosis Activities</h3>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Patient ID</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="diagnosisActivityTable">
+                                    <!-- Rows will be dynamically inserted here by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination controls -->
+                        <nav>
+                            <ul class="pagination justify-content-center" id="paginationControls">
+                                <!-- Pagination links will be dynamically generated here -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Patient Management Section (Initially hidden) -->
+                <div id="patient-management-section" style="display: none;">
+                    <h2 class="mt-4">Patient Management</h2>
+                    <button class="btn btn-success mb-3" id="add-patient-btn">Add New Patient</button>
+                    <!-- Register Patient Modal -->
+                    <div class="modal fade" id="registerPatientModal" tabindex="-1" role="dialog"
+                        aria-labelledby="registerPatientModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="registerPatientModalLabel"> <i
+                                            class="fas fa-user-plus"></i> Register New Patient</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <ul class="nav nav-tabs" id="patientRegistrationTab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="manual-tab" data-toggle="tab" href="#manual"
+                                                role="tab" aria-controls="manual" aria-selected="true">Manual Entry</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="import-tab" data-toggle="tab" href="#import"
+                                                role="tab" aria-controls="import" aria-selected="false">Import CSV</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content mt-3" id="patientRegistrationTabContent">
+                                        <div class="tab-pane fade show active" id="manual" role="tabpanel"
+                                            aria-labelledby="manual-tab">
+                                            <form id="registerPatientForm">
+                                                <div class="form-group">
+                                                    <label for="patientName">Patient Name</label>
+                                                    <input type="text" class="form-control" id="patientName" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="patientEmail">Email address</label>
+                                                    <input type="email" class="form-control" id="patientEmail" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="patientAge">Age</label>
+                                                    <input type="number" class="form-control" id="patientAge" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Gender</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="gender"
+                                                                id="male" value="male" required>
+                                                            <label class="form-check-label" for="male">Male</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="gender"
+                                                                id="female" value="female" required>
+                                                            <label class="form-check-label" for="female">Female</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Register</button>
+                                            </form>
+                                        </div>
+                                        <div class="tab-pane fade" id="import" role="tabpanel"
+                                            aria-labelledby="import-tab">
+                                            <form id="importPatientForm">
+                                                <div class="form-group">
+                                                    <label for="csvFile">Import CSV File</label>
+                                                    <input type="file" class="form-control-file" id="csvFile"
+                                                        accept=".csv" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Import and
+                                                    Register</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="text" class="form-control w-50 mb-3" id="search-bar"
+                        placeholder="Search by First Name">
+
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientList">
+                            <!-- Rows will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Diagnosis Module Section (Initially hidden) -->
+                <div id="diagnosis-section" style="display: none;">
+                    <h2 class="mt-4">Diagnosis Module</h2>
+                    <button class="btn btn-primary mb-3" id="new-diagnosis-btn">Start New Diagnosis</button>
+
+                    <!-- Upload Image Modal -->
+                    <div class="modal fade" id="uploadImageModal" tabindex="-1" role="dialog"
+                        aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="uploadImageModalLabel"><i
+                                            class="fas fa-upload mr-2"></i> Upload Diagnosis Images</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Form to upload images -->
+                                    <form id="upload_form" enctype="multipart/form-data" method="POST"
+                                        action="{{ url_for('diagnosis_bp.uploads') }}">
+                                        <input type="hidden" name="action" id="form_action" value="upload">
+
+                                        <div class="form-group row">
+                                            <label for="patient_id_input" class="col-sm-2 col-form-label">Patient
+                                                ID</label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control" id="patient_id_input" name="id"
+                                                    required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <button type="button" class="btn btn-info" id="checkPatientButton"
+                                                    onclick="checkPatient()">Check Patient</button>
+                                            </div>
+                                        </div>
+
+                                        <div id="checkPatientMessage" class="text-info mb-3"></div>
+
+                                        <div class="form-group">
+                                            <label for="image">Select Image</label>
+                                            <input type="file" class="form-control-file" id="diagnosisImages"
+                                                name="image" required disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <!-- Align buttons horizontally and control spacing -->
+                                            <button type="submit" class="btn btn-primary d-inline-block"
+                                                id="uploadButton" onclick="setFormAction('upload')" disabled>Upload
+                                                Image</button>
+                                            <button type="submit"
+                                                class="btn btn-success d-inline-block ml-2 mt-2 mt-md-0"
+                                                id="saveImagesButton" onclick="setFormAction('save_all')" disabled>Save
+                                                All Images</button>
+                                            <button type="button"
+                                                class="btn btn-danger d-inline-block ml-2 mt-2 mt-md-0" id="resetButton"
+                                                onclick="resetForm()">Reset</button>
+                                        </div>
+                                    </form>
+                                    <div id="error-message" class="text-danger mt-3"></div>
+                                    <p id="uploadCount"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        function checkPatient() {
+                            const patientId = document.getElementById('patient_id_input').value;
+
+                            if (!patientId) {
+                                document.getElementById('checkPatientMessage').textContent = "Please enter a valid Patient ID.";
+                                return;
+                            }
+
+                            // AJAX call to check if the patient exists
+                            $.ajax({
+                                url: '/check_patient/' + patientId,  // Endpoint to check the patient in the database
+                                method: 'GET',
+                                success: function (response) {
+                                    if (response.exists) {
+                                        document.getElementById('checkPatientMessage').textContent = "Patient found! You can now upload images.";
+                                        document.getElementById('diagnosisImages').disabled = false;
+                                        document.getElementById('uploadButton').disabled = false;
+                                        document.getElementById('saveImagesButton').disabled = false;
+                                    } else {
+                                        document.getElementById('checkPatientMessage').textContent = "Patient not found. Please try again.";
+                                        document.getElementById('diagnosisImages').disabled = true;
+                                        document.getElementById('uploadButton').disabled = true;
+                                        document.getElementById('saveImagesButton').disabled = true;
+                                    }
+                                },
+                                error: function (error) {
+                                    console.error("Error checking patient:", error);
+                                    document.getElementById('checkPatientMessage').textContent = "An error occurred. Please try again.";
+                                }
+                            });
+                        }
+
+                        function resetForm() {
+                            document.getElementById('upload_form').reset();
+                            document.getElementById('checkPatientMessage').textContent = "";
+                            document.getElementById('diagnosisImages').disabled = true;
+                            document.getElementById('uploadButton').disabled = true;
+                            document.getElementById('saveImagesButton').disabled = true;
+                        }
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const resetButton = document.getElementById('resetButton');
+                            const patientIdInput = document.getElementById('patient_id_input');
+
+                            resetButton.addEventListener('click', async () => {
+                                const patientId = patientIdInput.value;
+
+                                if (!patientId) {
+                                    alert("Please enter a valid Patient ID before resetting.");
+                                    return;
+                                }
+
+                                // Perform async reset operation
+                                try {
+                                    const response = await fetch('{{ url_for("diagnosis_bp.reset") }}', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                        body: new URLSearchParams({ id: patientId })
+                                    });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        alert(data.message);
+                                        patientIdInput.value = ''; // Clear Patient ID field
+                                        // Optionally clear other form elements
+                                    } else {
+                                        alert(data.message);
+                                    }
+                                } catch (error) {
+                                    console.error('Error during reset:', error);
+                                }
+                            });
+                        });
+                    </script>
+                    <!-- Automatically Show Modal on Page Load -->
+                    <!-- jQuery and Bootstrap JS -->
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script
+                        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+                    <script>
+                        // $(document).ready(function () {
+                        //     // Trigger the modal when the page loads
+                        //     $('#resultModal').modal('show');
+                        // });
+                    </script>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const maxImages = 5;
+                            let uploadedFilesCount = 0;  // This should be dynamically updated based on backend/session
+                            const uploadCountElem = document.getElementById('uploadCount');
+                            const uploadButton = document.getElementById('uploadButton');
+                            const saveImagesButton = document.getElementById('saveImagesButton');
+
+                            // Function to update buttons and the upload count display
+                            function updateButtons() {
+                                uploadButton.disabled = uploadedFilesCount >= maxImages;
+                                saveImagesButton.disabled = uploadedFilesCount < maxImages;
+                                uploadCountElem.textContent = `${uploadedFilesCount} of ${maxImages} images uploaded.`;
+                            }
+
+                            // Initial state on page load
+                            updateButtons();
+
+                            // Handle form submission via AJAX or normal submission
+                            const form = document.getElementById('upload_form');
+                            form.addEventListener('submit', function (event) {
+                                // In real cases, you'd use AJAX for this to prevent page reload.
+                                // Fetch the form data and update based on the backend response.
+                                // For now, we'll just mock an increment for demo purposes.
+                                event.preventDefault();  // Prevent the page from reloading
+
+                                const formData = new FormData(form);
+                                fetch('{{ url_for("diagnosis_bp.uploads") }}', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            uploadedFilesCount = data.uploaded_files.length;  // Update based on response
+                                            updateButtons();  // Update buttons and count
+                                        } else {
+                                            document.getElementById('error-message').textContent = data.message;
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                    });
+                            });
+                        });
+                    </script>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const saveImagesButton = document.getElementById('saveImagesButton');
+
+                            // Add event listener for "Save All Images" button
+                            saveImagesButton.addEventListener('click', function (event) {
+                                event.preventDefault();
+
+                                const patientId = document.getElementById('patient_id_input').value;
+
+                                // Send a request to save all the uploaded images
+                                fetch('{{ url_for("diagnosis_bp.save_all") }}', {
+                                    method: 'POST',
+                                    body: new URLSearchParams({ id: patientId }),
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                    },
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            alert(data.message);  // Show success message
+                                        } else {
+                                            alert(data.message);  // Show error message
+                                        }
+                                    })
+                                    .catch(error => console.error('Error:', error));
+                            });
+                        });
+                    </script>
+            </main>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultModalLabel">Diagnosis Results</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Patient ID:</strong> <span id="patientIdDisplay"></span></p>
+                    <div id="detectedParasites">
+                        <!-- Parasite info will be dynamically populated here -->
+                    </div>
+                    <p><strong>Status:</strong> <span id="statusDisplay"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- jQuery and Bootstrap JS -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> -->
+
+    <!-- AJAX to Fetch Data and Populate Modal -->
+    <!-- AJAX to Fetch Data and Populate Modal -->
+    <script>
+        function fetchDiagnosisResults(patientId) {
+            $.ajax({
+                url: '/get_result/' + patientId,  // Flask route to fetch diagnosis data
+                method: 'GET',
+                success: function (response) {
+                    // Access the main diagnosis details from the response
+                    const severity = response.severity || 'Unknown';
+                    const totalWbcCount = response.total_wbcs || 'Unknown';
+                    const totalParasiteCount = response.total_parasites || 'Unknown';
+                    const parasiteDensity = response.parasite_density
+                        ? response.parasite_density.toFixed(2)
+                        : 'Unknown';
+                    const dominantParasite = response.dominant_parasite || 'Unknown';
+                    const dominantConfidence = response.dominant_confidence
+                        ? (response.dominant_confidence * 100).toFixed(2) + '%'
+                        : 'Unknown';
+
+                    // Prepare information to display in the modal
+                    const resultInfo = `
+                <p><strong>Patient Id:</strong> ${patientId}</p>
+                <p><strong>Dominant Parasite:</strong> ${dominantParasite}</p>
+                <p><strong>Dominant Parasite Confidence:</strong> ${dominantConfidence}</p>
+                <p><strong>Total Parasite Count:</strong> ${totalParasiteCount}</p>
+                <p><strong>Total WBC Count:</strong> ${totalWbcCount}</p>
+                <p><strong>Parasite Density:</strong> ${parasiteDensity}</p>
+                <p><strong>Severity (Overall):</strong> ${severity}</p>
+            `;
+                    document.getElementById('detectedParasites').innerHTML = resultInfo;
+
+                    // Populate patient ID and status in the modal
+                    document.getElementById('patientIdDisplay').textContent = response.patient_id || 'Unknown';
+                    document.getElementById('statusDisplay').textContent = response.status || 'Unknown';
+
+                    // Show the modal using Bootstrap's modal method
+                    $('#resultModal').modal('show');
+                },
+                error: function (error) {
+                    console.log("Error fetching diagnosis data: ", error);
+                    alert("An error occurred while fetching the diagnosis data.");
+                }
+            });
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            let diagnosisData = [];  // Store fetched data
+            let rowsPerPage = 5;  // Limit the number of rows per page
+            let currentPage = 1;  // Track the current page
+
+            // Function to fetch diagnosis data and update the table
+            function loadDiagnosisData() {
+                $.ajax({
+                    url: "{{ url_for('diagnosis_bp.get_all_diagnoses') }}",  // API endpoint for all diagnoses
+                    method: 'GET',
+                    success: function (response) {
+                        diagnosisData = response.diagnoses;  // Store fetched data
+                        setupPagination(diagnosisData.length);  // Setup pagination controls
+                        displayPage(currentPage);  // Display the first page of data
+                    },
+                    error: function (xhr) {
+                        console.error('Error fetching diagnosis data');
+                    }
+                });
+            }
+
+            // Function to display the current page of rows
+            function displayPage(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                const pageData = diagnosisData.slice(start, end);  // Get the data for the current page
+
+                $('#diagnosisActivityTable').empty();  // Clear existing table rows
+
+                pageData.forEach(function (diagnosis, index) {
+                    let processButtonDisabled = diagnosis.status !== 'initiated' ? 'disabled' : '';
+                    let viewResultsButtonDisabled = diagnosis.status !== 'completed' ? 'disabled' : '';
+
+                    $('#diagnosisActivityTable').append(`
+                        <tr>
+                            <td>${start + index + 1}</td>
+                            <td>${diagnosis.patient_id}</td>
+                            <td>${new Date(diagnosis.date).toLocaleDateString()}</td>
+                            <td>${diagnosis.status}</td>
+                            <td>
+                            <form action="/process_diagnosis/${diagnosis.patient_id}" method="POST" class="process-diagnosis-form" style="display:inline;">
+                                <button class="btn btn-warning btn-sm" ${processButtonDisabled}>
+                                    <i class="fas fa-cogs"></i> Process
+                                </button>
+                            </form>
+                            <form action="/get_result/${diagnosis.patient_id}" method="get" class="view-results-form" style="display:inline;">
+                                <button onclick="fetchDiagnosisResults('${diagnosis.patient_id}')" class="btn btn-info btn-sm" ${viewResultsButtonDisabled}>
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </form>
+                            </td>
+                        </tr>
+                    `);
+                });
+
+                attachFormHandlers();  // Reattach form handlers after rows are re-rendered
+            }
+
+            // Function to generate pagination controls
+            function setupPagination(totalRows) {
+                const totalPages = Math.ceil(totalRows / rowsPerPage);
+                const paginationControls = $('#paginationControls');
+                paginationControls.empty();  // Clear previous controls
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageLink = `
+                        <li class="page-item ${i === currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                        </li>
+                    `;
+                    paginationControls.append(pageLink);
+                }
+            }
+
+            // Change the current page
+            window.changePage = function (page) {
+                currentPage = page;
+                displayPage(page);
+                setupPagination(diagnosisData.length);  // Update pagination controls
+            };
+
+            // Function to attach form handlers for process and view results
+            function attachFormHandlers() {
+                // Process Diagnosis via AJAX
+                $('form.process-diagnosis-form').on('submit', function (e) {
+                    e.preventDefault();  // Prevent the form from submitting traditionally
+                    const form = $(this);
+                    const processUrl = form.attr('action');
+
+                    $.ajax({
+                        url: processUrl,
+                        method: 'POST',
+                        success: function (response) {
+                            alert(response.message);  // Show success message
+                            loadDiagnosisData();  // Reload data after processing
+                        },
+                        error: function (xhr) {
+                            alert('Error processing the diagnosis.');
+                        }
+                    });
+                });
+
+                // View Results via AJAX
+                $('form.view-results-form').on('submit', function (e) {
+                    e.preventDefault();  // Prevent the form from submitting traditionally
+                    const form = $(this);
+                    const viewUrl = form.attr('action');
+
+                    $.ajax({
+                        url: viewUrl,
+                        method: 'GET',
+                        success: function (response) {
+                            // Handle the display of results in a modal
+                            $('#resultModal .modal-body').html(response.result);
+                            $('#resultModal').modal('show');
+                        },
+                        error: function (xhr) {
+                            alert('Error fetching the results.');
+                        }
+                    });
+                });
+            }
+
+            // Initial data load
+            loadDiagnosisData();
+
+            // Optionally reload data every 30 seconds (30000 milliseconds)
+            setInterval(loadDiagnosisData, 10000);
+        });
+    </script>
+
+    <script>
+        function testLog() {
+            console.log("God is able!!")
+        }
+        // Function to load diagnosis data from the API
+        function loadDiagnosisReport() {
+            fetch('http://127.0.0.1:5002/diagnosis_report')  // Replace with your actual API URL
+                .then(response => response.json())
+                .then(data => {
+                    let newDiagnosesCount = 0;
+                    let pendingResultsCount = 0;
+                    let completedReportsCount = 0;
+
+                    console.log(data);  // Log the full response for debugging
+
+                    // Check if data contains the 'diagnoses' array
+                    if (Array.isArray(data.diagnoses)) {
+                        // Iterate over the diagnosis data to count based on their status
+                        data.diagnoses.forEach(diagnosis => {
+                            if (diagnosis.status === 'initiated') {
+                                newDiagnosesCount++;
+                            } else if (diagnosis.status === 'pending') {
+                                pendingResultsCount++;
+                            } else if (diagnosis.status === 'completed') {
+                                completedReportsCount++;
+                            }
+                        });
+
+                        // Log the counts to verify they're being calculated correctly
+                        console.log("New Diagnoses Count:", newDiagnosesCount);
+                        console.log("Pending Results Count:", pendingResultsCount);
+                        console.log("Completed Reports Count:", completedReportsCount);
+
+                        // Update the card values dynamically
+                        document.getElementById('newDiagnosesCount').textContent = newDiagnosesCount;
+                        document.getElementById('pendingResultsCount').textContent = pendingResultsCount;
+                        document.getElementById('completedReportsCount').textContent = completedReportsCount;
+                    } else {
+                        console.error("Diagnoses data is not in the expected format.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching diagnosis data:', error);
+                });
+        }
+
+        // Function to load patient data from the API and update the patient count
+        function loadPatientCount() {
+            fetch('http://127.0.0.1:5002/patients')  // Use the existing /patients route
+                .then(response => response.json())
+                .then(data => {
+                    const patientsCount = data.length;  // Count the number of patients
+
+                    console.log("Patients Count:", patientsCount);  // Log the count for debugging
+
+                    // Update the patient count card dynamically
+                    document.getElementById('patientsCount').textContent = patientsCount;
+                })
+                .catch(error => {
+                    console.error('Error fetching patient data:', error);
+                });
+        }
+
+        // Call the function to load the data when the page loads
+        window.onload = loadDiagnosisReport();
+    </script>
+
+    <script>
+        // Function to fetch and display patients
+        function loadPatients() {
+            // Fetch the data from the API
+            fetch('http://127.0.0.1:5002/get_all_patients')
+                .then(response => response.json())  // Parse the JSON response
+                .then(data => {
+                    // Log the entire response to check if the data structure is correct
+                    console.log('API Response:', data);
+
+                    // Access the patients array from the response
+                    const patients = data.patients;
+
+                    // Check if patients array is present
+                    if (!patients) {
+                        throw new Error('Patients data is missing in the response');
+                    }
+
+                    // Get the patient list table body
+                    const patientList = document.getElementById('patientList');
+
+                    // Clear the existing rows
+                    patientList.innerHTML = '';
+
+                    // Loop through each patient and create table rows
+                    patients.forEach((patient, index) => {
+                        // Create a new row element
+                        const row = document.createElement('tr');
+
+                        // Populate the row with patient data
+                        row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${patient.patient_id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.email || 'N/A'}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.gender}</td>
+                `;
+
+                        // Append the row to the patientList table body
+                        patientList.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching patients:', error);
+                });
+        }
+
+
+        // Call the function to load patients when the page loads
+
+        // Call multiple functions when the window loads
+        window.onload = function () {
+            loadPatients();
+            testLog();
+            loadDiagnosisReport();
+            loadPatientCount();
+
+        };
+
+    </script>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Custom JavaScript (link to external JS files) -->
+    <script src="../static/js/section_switching.js"></script>
+    <script src="../static/js/modal_handler.js"></script>
+</body>
+
+</html>
